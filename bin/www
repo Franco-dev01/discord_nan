@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const Serveur = require('../app.js');
+const debug = require('debug')('repository:server');
+const http = require('http');
+
+const db = require('../settings/database');
+const serveur = new Serveur();
+const app  = serveur.getApp();
+const {rootQueries} = require('../controllers/root.controller');
+const {LoginQueries} = require('../controllers/login.controller');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+const io = require('socket.io').listen(server);
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+db();
+
+const home = io.of('/admin').use(serveur.getSharedSession());
+home.on('connection', async (socket)=>{
+  console.log("user connected")
+
+socket.on('setadmin',async(data)=>{
+  console.log(data);
+  const resu = await rootQueries.setAdmin(data);
+  console.log(resu.user)
+  if(resu.user != null){
+    socket.emit('setadmin',resu.user)
+  }
+})
+
+socket.on('unsetadmin',async(data)=>{
+  const resu = await rootQueries.UnsetAdmin(data);
+  if(resu.user != null){
+    socket.emit('setadmin',resu.user)
+  }
+})
+});
+
+
+
+const login=io.of('/admin/login');
+login.on('connection', async (socket)=>{
+  console.log('connection reussit')
+
+socket.on ('sign_in', async (data)=>{
+  console.log(data);
+const result = await LoginQueries.getusers(data);
+console.log(result)
+if(result.users != null){
+   if (result.users.role == " admin"){
+     
+       socket.emit('admin','vous etes un admin')
+   }else{
+    socket.emit('unadmin','vous n etes pas un admin')
+   // console.log("vous n etes pas admin")
+      
+   }
+      
+ // socket.emit('log_succed',result.users)
+}else{
+ // console.log('vous n etes pas un membre')
+  
+  socket.emit('noMembre','vous n etes pas un membre veillez vous enregistré')
+  
+}
+
+})
+})
+
+
+
+
+
+
+
+
+
+server.listen(port);
+
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+  console.log('i listenning on port 3000');
+};
