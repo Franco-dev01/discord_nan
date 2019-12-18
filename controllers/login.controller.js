@@ -1,7 +1,6 @@
 const log = require('../models/user.model');
 
 exports.LoginQueries = class {
- 
 static getusers(data){
     return new Promise( async (next)=>{
         log.findOne({

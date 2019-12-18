@@ -55,34 +55,37 @@ socket.on('unsetadmin',async(data)=>{
 });
 
 
-
-const login=io.of('/admin/login');
+//use(serveur.getSharedSession()) permet ici de creer une session lorsque 
+//lorsquel l utilisateur arrive sur la page login
+const login=io.of('/admin/login').use(serveur.getSharedSession());
 login.on('connection', async (socket)=>{
   console.log('connection reussit')
 
-socket.on ('sign_in', async (data)=>{
-  console.log(data);
-const result = await LoginQueries.getusers(data);
-console.log(result)
-if(result.users != null){
-   if (result.users.role == " admin"){
-     
-       socket.emit('admin','vous etes un admin')
-   }else{
-    socket.emit('unadmin','vous n etes pas un admin')
-   // console.log("vous n etes pas admin")
+    socket.on ('sign_in', async (data)=>{
+      console.log(data);
+    const result = await LoginQueries.getusers(data);
+    console.log(result)
+    if(result.users != null){
+      if (result.users.role == " admin"){
+        socket.handshake.session.group=result.users;
+        socket.handshake.session.save();
+        console.log('je suis une session'+ result.users)
+          socket.emit('admin','vous etes un admin')
+      }else{
+        socket.emit('unadmin','vous n etes pas un admin')
+      // console.log("vous n etes pas admin")
+          
+      }
+          
+    // socket.emit('log_succed',result.users)
+    }else{
+    // console.log('vous n etes pas un membre')
       
-   }
+      socket.emit('noMembre','vous n etes pas un membre veillez vous enregistré')
       
- // socket.emit('log_succed',result.users)
-}else{
- // console.log('vous n etes pas un membre')
-  
-  socket.emit('noMembre','vous n etes pas un membre veillez vous enregistré')
-  
-}
+    }
 
-})
+  })
 })
 
 

@@ -3,13 +3,18 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+//creation de session avec socket  io
 const sharedSession = require('express-socket.io-session');
-const io = require('socket.io')
+const io = require('socket.io');
+
 const session = require('express-session')({
   secret: "amemnjesusrevient",
   resave:true,
   saveUninitialized: true
 });
+
+
 var loginRouter = require ('./routes/login')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');

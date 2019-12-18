@@ -536,8 +536,8 @@
 
    <script src="/socket.io/socket.io.js"></script>
   <script>
-      const socket = io('http://localhost:3000/admin/piscole');
-      var uploader = new SocketIOFileClient(socket);
+      const socket = io('http://localhost:3000/admin/piscicole');
+      //var uploader = new SocketIOFileClient(socket);
       $('.btn-primary').on('click',(e)=>{
         e.preventDefault()
         const data = {
@@ -550,8 +550,6 @@
         console.log(data)
       })
 
-
-      
   </script> 
 
 </body>

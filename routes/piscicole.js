@@ -4,17 +4,15 @@ var router = express.Router();
 /**
 /* GET home page. */
 router.route("/admin/groupe")
-.get(async function(req, res, next) {
-res.render('piscicole');
-});
+    .get(async function(req, res, next) {
+    res.render('piscicole');
+    });
 
 router.route("/admin/groupe")
-.post(async function(req, res, next) {
-
-
-    
-console.log(req.body)
-//res.render('piscicole');
+    .post(async function(req, res, next) {
+        
+    console.log(req.body)
+    //res.render('piscicole');
 });
 
 
