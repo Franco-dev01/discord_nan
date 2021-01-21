@@ -20,7 +20,7 @@
     "nodemailer": "^6.3.1",
     "nodemon": "^1.19.4",
     "session.socket.io": "^0.2.1",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "socket.io-file": "^2.0.31"
   }
 }
